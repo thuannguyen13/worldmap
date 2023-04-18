@@ -2,12 +2,27 @@
 
 .header {
     width: 100%;
+    padding: 8px 24px;
     background-color: rgba($N100, 0.8);
-}
-
-.global-nav {
     height: 60px;
     display: flex;
-    align-items: center;
-    padding: 8px 24px;
+    justify-content: space-between;
+
+    .left-content {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .right-content {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
 }

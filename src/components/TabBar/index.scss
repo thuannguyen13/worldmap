@@ -1,0 +1,23 @@
+@import "src/styles/style.scss";
+
+.tab-bar {
+    width: 100%;
+    padding: 0 24px;
+    background-color: rgba($N100, 0.8);
+    height: 44px;
+    display: flex;
+    color: $Mono-White;
+    font-size: 14px;
+
+    .tab {
+        padding: 8px 12px;
+        border-radius: 8px 8px 0px 0px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+
+        &.active {
+            background-color: $N300;
+        }
+    }
+}

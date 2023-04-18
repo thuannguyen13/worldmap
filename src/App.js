@@ -10,6 +10,7 @@ import Button from "./components/Button";
 import Toolbar from "./components/Toolbar";
 import Checkbox from "./components/Checkbox";
 import Header from "./components/Header";
+import TabBar from "./components/TabBar";
 
 export default function App() {
     const fgMap = useRef(null);
@@ -154,6 +155,7 @@ export default function App() {
     return (
         <div className="layout">
             <Header />
+            <TabBar />
             <main className="main">
                 <div id="mapA" ref={fgMapContainer} />
                 <div id="mapB" ref={bgMapContainer} />

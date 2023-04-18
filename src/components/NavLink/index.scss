@@ -1,0 +1,17 @@
+@import "src/styles/style.scss";
+
+.nav-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    border: none;
+    font-size: 14px;
+    text-align: center;
+    color: #fff;
+    background-color: transparent;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
