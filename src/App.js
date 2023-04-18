@@ -1,6 +1,7 @@
 // Dependencies
 import React, { useEffect, useRef } from "react";
 import mapboxgl from "!mapbox-gl"; // eslint-disable-line import/no-webpack-loader-syntax
+import { useSyncMap } from "./hooks/useSyncMap";
 
 // Styles
 import "./styles/style.scss";
@@ -22,8 +23,6 @@ export default function App() {
     const fgMapContainer = useRef(null);
     const bgMap = useRef(null);
     const bgMapContainer = useRef(null);
-    const mapADiv = document.getElementById("mapA");
-    const ruler = document.getElementById("ruler");
 
     let settings = {
         mapStyle: "mapbox://styles/kenzilian13/clc00vjyb000214p39wvteqj3/draft",
@@ -83,20 +82,6 @@ export default function App() {
             ...settings.camera,
         });
 
-        fgMap.current.on("move", function () {
-            bgMap.current.setCenter(flipCoords(fgMap.current.getCenter()));
-        });
-
-        fgMap.current.on("zoom", function () {
-            let curZoom = fgMap.current.getZoom();
-            matchZoom(curZoom);
-        });
-
-        fgMap.current.on("load", () => {
-            matchZoom(fgMap.current.getZoom());
-            bgMap.current.setCenter(flipCoords(fgMap.current.getCenter()));
-        });
-
         fgMap.current.on("click", (e) => {
             let cord = null;
             let locTitle = null;
@@ -134,36 +119,7 @@ export default function App() {
         });
     });
 
-    function flipCoords(lnglat) {
-        let lat = -lnglat.lat;
-        let lng = lnglat.lng + 180;
-        return new mapboxgl.LngLat(lng, lat);
-    }
-
-    function matchZoom(zoom) {
-        bgMap.current.setZoom(zoom);
-    }
-
-    function toggleCaptureGuide() {
-        settings.ShowRuler ? ruler.classList.add("hidden") : ruler.classList.remove("hidden");
-        settings.ShowRuler = !settings.ShowRuler;
-    }
-
-    function toggleProjection() {
-        if (settings.is3D) {
-            fgMap.current.setProjection({
-                name: settings.projection.view2D,
-            });
-            mapADiv.style.opacity = 1;
-        } else {
-            fgMap.current.setProjection({
-                name: settings.projection.view3D,
-            });
-            fgMap.current.style.opacity = 0.9;
-        }
-
-        settings.is3D = !settings.is3D;
-    }
+    useSyncMap(fgMap, bgMap);
 
     function toggleCamera() {
         const target = settings.camera.isAtStart ? settings.camera.end : settings.camera.start;
@@ -175,6 +131,37 @@ export default function App() {
             essential: true,
         });
     }
+
+    // function flipCoords(lnglat) {
+    //     let lat = -lnglat.lat;
+    //     let lng = lnglat.lng + 180;
+    //     return new mapboxgl.LngLat(lng, lat);
+    // }
+
+    // function matchZoom(zoom) {
+    //     bgMap.current.setZoom(zoom);
+    // }
+
+    // function toggleCaptureGuide() {
+    //     settings.ShowRuler ? ruler.classList.add("hidden") : ruler.classList.remove("hidden");
+    //     settings.ShowRuler = !settings.ShowRuler;
+    // }
+
+    // function toggleProjection() {
+    //     if (settings.is3D) {
+    //         fgMap.current.setProjection({
+    //             name: settings.projection.view2D,
+    //         });
+    //         mapADiv.style.opacity = 1;
+    //     } else {
+    //         fgMap.current.setProjection({
+    //             name: settings.projection.view3D,
+    //         });
+    //         fgMap.current.style.opacity = 0.9;
+    //     }
+
+    //     settings.is3D = !settings.is3D;
+    // }
 
     // function toggleUI() {
     //     settings.showToolbar ? toolbar.classList.add("hidden") : toolbar.classList.remove("hidden");
