@@ -74,3 +74,31 @@ body {
 .mapboxgl-ctrl-bottom-right {
     display: none !important;
 }
+
+.mapboxgl-popup {
+    &-content {
+        @extend %popup;
+        color: $Mono-White;
+        max-width: 400px;
+        padding: 16px;
+
+        p {
+            margin-top: 4px;
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 16px;
+            color: #a4a7ac;
+        }
+
+        .title {
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 20px;
+        }
+    }
+
+    &-close-button,
+    &-tip {
+        display: none !important;
+    }
+}

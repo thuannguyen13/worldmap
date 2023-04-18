@@ -22,11 +22,6 @@ export default function App() {
     const fgMapContainer = useRef(null);
     const bgMap = useRef(null);
     const bgMapContainer = useRef(null);
-    const popup = new mapboxgl.Popup({
-        closeButton: false,
-        closeOnClick: false,
-    });
-
     const mapADiv = document.getElementById("mapA");
     const ruler = document.getElementById("ruler");
 
@@ -99,33 +94,43 @@ export default function App() {
 
         fgMap.current.on("load", () => {
             matchZoom(fgMap.current.getZoom());
-            console.log(fgMap.current.getStyle());
             bgMap.current.setCenter(flipCoords(fgMap.current.getCenter()));
         });
 
-        fgMap.current.on("mouseenter", "places", (e) => {
-            // Change the cursor style as a UI indicator.
-            fgMap.getCanvas().style.cursor = "pointer";
+        fgMap.current.on("click", (e) => {
+            let cord = null;
+            let locTitle = null;
+            let locLocation = null;
+            let locURL = null;
+            const features = fgMap.current.queryRenderedFeatures(e.point, {
+                layers: ["IEP", "military"],
+            });
+            if (!features.length) return;
+            const feature = features[0];
 
-            // Copy coordinates array.
-            const coordinates = e.features[0].geometry.coordinates.slice();
-            const description = e.features[0].properties.description;
-
-            // Ensure that if the map is zoomed out such that multiple
-            // copies of the feature are visible, the popup appears
-            // over the copy being pointed to.
-            while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+            if (feature.layer.id === "military") {
+                cord = JSON.parse(feature.properties.geo_point_2d).reverse();
+                locTitle = feature.properties.site_name;
+                locLocation = feature.properties.state_terr;
+                locURL = feature.properties.oper_stat;
+            } else {
+                cord = feature.geometry.coordinates;
+                locTitle = feature.properties.ixpname;
+                locLocation = feature.properties.city;
+                locURL = feature.properties.url ? feature.properties.url : "N/A";
             }
 
-            // Populate the popup and set its coordinates
-            // based on the feature found.
-            popup.setLngLat(coordinates).setHTML(description).addTo(fgMap);
-        });
+            console.log(feature);
+            console.log(cord);
 
-        fgMap.current.on("mouseleave", "places", () => {
-            fgMap.getCanvas().style.cursor = "";
-            popup.remove();
+            const popup = new mapboxgl.Popup({ offset: [0, -15] })
+                .setLngLat(cord)
+                .setHTML(
+                    `<h3 class="title">${locTitle}</h3>
+                    <p class="address">${locLocation}</p>
+                    <p class="address">${locURL}</p>`
+                )
+                .addTo(fgMap.current);
         });
     });
 
@@ -200,6 +205,8 @@ export default function App() {
                     {dataLayers.map((item) => {
                         return (
                             <SidebarItem
+                                id={item.key}
+                                key={item.key}
                                 label={item.key}
                                 onClick={(e) => {
                                     fgMap.current.setLayoutProperty(`${item.key}`, "visibility", e.target.checked ? "visible" : "none");

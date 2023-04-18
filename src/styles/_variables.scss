@@ -32,7 +32,7 @@ $shadow-5: 0px 0px 4px 0px #9696a04d, 0px 0px 2px 0px #9696a080;
 $shadow-10: 0px 2px 8px rgba(0, 0, 0, 0.05);
 $shadow-15: 0px 8px 18px rgba($Mono-Black, 0.1);
 
-%sidebar {
+%popup {
     background-color: rgba($N300, 0.9);
     border: 1px solid $N600;
     backdrop-filter: blur(2px);

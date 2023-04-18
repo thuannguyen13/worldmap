@@ -12,11 +12,13 @@ export default function FilterWidget({ label, children }) {
     );
 }
 
-export function SidebarItem({ label, icon, onClick }) {
+export function SidebarItem({ id, label, icon, onClick }) {
     const [checked, setChecked] = useState(true);
     return (
         <label className="sidebar-item">
             <input
+                id={id}
+                key={id}
                 type="checkbox"
                 onClick={onClick}
                 onChange={() => {

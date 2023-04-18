@@ -9,7 +9,7 @@
     left: 8px;
     width: 240px;
     border-radius: 8px;
-    @extend %sidebar;
+    @extend %popup;
     color: $Mono-White;
 
     .header-content {

@@ -7,6 +7,7 @@ export default function Checkbox({ id, label, onClick }) {
     return (
         <label className="checkbox">
             <input
+                id={id}
                 type="checkbox"
                 onClick={onClick}
                 onChange={() => {
