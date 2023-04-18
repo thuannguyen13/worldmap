@@ -1,0 +1,13 @@
+@import "src/styles/style.scss";
+
+.header {
+    width: 100%;
+    background-color: rgba($N100, 0.8);
+}
+
+.global-nav {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    padding: 8px 24px;
+}

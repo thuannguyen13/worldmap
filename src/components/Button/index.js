@@ -3,7 +3,7 @@ import "./index.scss";
 
 export default function Button({ value, onClick }) {
     return (
-        <button onClick={onClick} id="projectionBtn" value={value}>
+        <button className="button" onClick={onClick} id="projectionBtn" value={value}>
             {value}
         </button>
     );

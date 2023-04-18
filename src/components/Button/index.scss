@@ -1,0 +1,20 @@
+@import "src/styles/style.scss";
+
+.button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    bottom: 0;
+    right: 0;
+    height: 20px;
+    border: none;
+    border-radius: 3px;
+    font-size: 14px;
+    text-align: center;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.2);
+
+    &:hover {
+        cursor: pointer;
+    }
+}

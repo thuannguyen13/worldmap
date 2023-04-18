@@ -1,12 +1,16 @@
+// Dependencies
 import React, { useEffect, useRef } from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import mapboxgl from "!mapbox-gl"; // eslint-disable-line import/no-webpack-loader-syntax
+
+// Styles
 import "./styles/style.scss";
 
+// Components
 import Button from "./components/Button";
 import Toolbar from "./components/Toolbar";
 import Checkbox from "./components/Checkbox";
-
-mapboxgl.accessToken = "pk.eyJ1Ijoia2VuemlsaWFuMTMiLCJhIjoiY2wwODBna2FhMDBiaTNkb2Ixb2g5bWJ1dyJ9.kk1S4Fgd5GWc-yASL0eoJg";
+import Header from "./components/Header";
 
 export default function App() {
     const fgMap = useRef(null);
@@ -15,16 +19,12 @@ export default function App() {
     const bgMapContainer = useRef(null);
 
     const toolbar = document.getElementById("btnGroup");
-    const rulerBtn = document.getElementById("toggleRulerBtn");
-    const uiBtn = document.getElementById("toggleUIBnt");
-    const cameraBtn = document.getElementById("resetCamBtn");
-    const projectionBtn = document.getElementById("projectionBtn");
     const mapADiv = document.getElementById("mapA");
     const ruler = document.getElementById("ruler");
-    // const menu = useRef(null);
 
     let settings = {
         mapStyle: "mapbox://styles/kenzilian13/clc00vjyb000214p39wvteqj3/draft",
+        accessToken: "pk.eyJ1Ijoia2VuemlsaWFuMTMiLCJhIjoiY2wwODBna2FhMDBiaTNkb2Ixb2g5bWJ1dyJ9.kk1S4Fgd5GWc-yASL0eoJg",
         projection: {
             view2D: "mercator",
             view3D: "globe",
@@ -60,6 +60,8 @@ export default function App() {
             key: "military",
         },
     ];
+
+    mapboxgl.accessToken = settings.accessToken;
 
     useEffect(() => {
         if (fgMap.current && bgMap.current) return;
@@ -151,27 +153,30 @@ export default function App() {
     loadShorcuts();
 
     return (
-        <div>
-            <div id="mapA" ref={fgMapContainer} />
-            <div id="mapB" ref={bgMapContainer} />
-            <Toolbar>
-                <Button value="Toggle Camera" onClick={toggleCamera} />
-                <Button value="Toggle Capture Guide" onClick={toggleCaptureGuide} />
-                <Button value="Toggle Projection" onClick={toggleProjection} />
-                <Button value="Toggle UI" onClick={toggleUI} />
-                {dataLayers.map((item) => {
-                    return (
-                        <Checkbox
-                            label={item.key}
-                            onClick={(e) => {
-                                fgMap.current.setLayoutProperty(`${item.key}`, "visibility", e.target.checked ? "visible" : "none");
-                                bgMap.current.setLayoutProperty(`${item.key}`, "visibility", e.target.checked ? "visible" : "none");
-                            }}
-                            checked={"true"}
-                        />
-                    );
-                })}
-            </Toolbar>
+        <div className="layout">
+            <Header />
+            <main className="main">
+                <div id="mapA" ref={fgMapContainer} />
+                <div id="mapB" ref={bgMapContainer} />
+                <Toolbar>
+                    <Button value="Toggle Camera" onClick={toggleCamera} />
+                    <Button value="Toggle Capture Guide" onClick={toggleCaptureGuide} />
+                    <Button value="Toggle Projection" onClick={toggleProjection} />
+                    <Button value="Toggle UI" onClick={toggleUI} />
+                    {dataLayers.map((item) => {
+                        return (
+                            <Checkbox
+                                label={item.key}
+                                onClick={(e) => {
+                                    fgMap.current.setLayoutProperty(`${item.key}`, "visibility", e.target.checked ? "visible" : "none");
+                                    bgMap.current.setLayoutProperty(`${item.key}`, "visibility", e.target.checked ? "visible" : "none");
+                                }}
+                                checked={"true"}
+                            />
+                        );
+                    })}
+                </Toolbar>
+            </main>
         </div>
     );
 }

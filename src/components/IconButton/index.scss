@@ -1,0 +1,12 @@
+@import "src/styles/style.scss";
+
+.icon-button {
+    background-color: $N60;
+    height: 32px;
+    width: 32px;
+    border-radius: 999px;
+    border: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
