@@ -1,6 +1,5 @@
 // Dependencies
 import React, { useEffect, useRef } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import mapboxgl from "!mapbox-gl"; // eslint-disable-line import/no-webpack-loader-syntax
 
 // Styles
