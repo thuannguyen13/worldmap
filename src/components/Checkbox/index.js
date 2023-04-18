@@ -5,9 +5,8 @@ export default function Checkbox({ id, label, onClick }) {
     const [checked, setChecked] = useState(true);
 
     return (
-        <label className="checkbox" for={id}>
+        <label className="checkbox">
             <input
-                id={id}
                 type="checkbox"
                 onClick={onClick}
                 onChange={() => {

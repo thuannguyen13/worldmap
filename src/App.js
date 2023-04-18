@@ -7,10 +7,15 @@ import "./styles/style.scss";
 
 // Components
 import Button from "./components/Button";
-import Toolbar from "./components/Toolbar";
-import Checkbox from "./components/Checkbox";
+import PageHeader from "./components/PageHeader";
 import Header from "./components/Header";
 import TabBar from "./components/TabBar";
+import FilterSidebar, { SidebarItem } from "./components/FilterSidebar";
+import IcoEye from "./assets/IcoEye";
+import IcoTimeLine from "./assets/IcoTimeline";
+import IcoGlobe from "./assets/IcoGlobe";
+import IcoPlus from "./assets/IcoPlus";
+import IcoArrowDown from "./assets/IcoArrowDown";
 
 export default function App() {
     const fgMap = useRef(null);
@@ -156,17 +161,18 @@ export default function App() {
         <div className="layout">
             <Header />
             <TabBar />
+            <PageHeader>
+                <Button leadingIcon={<IcoEye />} value="Switch Camera" onClick={toggleCamera} />
+                <Button leadingIcon={<IcoEye />} value="View Playbook" />
+                <Button leadingIcon={<IcoTimeLine />} value="View Timeline" />
+                <Button leadingIcon={<IcoPlus />} value="Create Plan" />
+                <Button leadingIcon={<IcoGlobe />} traillingIcon={<IcoArrowDown />} value="Communicate" />
+            </PageHeader>
             <main className="main">
-                <div id="mapA" ref={fgMapContainer} />
-                <div id="mapB" ref={bgMapContainer} />
-                <Toolbar>
-                    <Button value="Toggle Camera" onClick={toggleCamera} />
-                    <Button value="Toggle Capture Guide" onClick={toggleCaptureGuide} />
-                    <Button value="Toggle Projection" onClick={toggleProjection} />
-                    <Button value="Toggle UI" onClick={toggleUI} />
+                <FilterSidebar>
                     {dataLayers.map((item) => {
                         return (
-                            <Checkbox
+                            <SidebarItem
                                 label={item.key}
                                 onClick={(e) => {
                                     fgMap.current.setLayoutProperty(`${item.key}`, "visibility", e.target.checked ? "visible" : "none");
@@ -176,7 +182,9 @@ export default function App() {
                             />
                         );
                     })}
-                </Toolbar>
+                </FilterSidebar>
+                <div id="mapA" ref={fgMapContainer} />
+                <div id="mapB" ref={bgMapContainer} />
             </main>
         </div>
     );

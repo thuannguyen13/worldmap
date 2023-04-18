@@ -5,29 +5,21 @@ import IcoPlaceholder from "../../assets/IcoPlaceholder";
 
 export default function TabBar() {
     return (
-        <>
-            <div className="tab-bar">
-                <div className="tab active">
-                    <IcoMap />
-                    Integrated Ops
-                </div>
-                <div className="tab">
-                    <IcoPlaceholder />
-                    CISA
-                </div>
-                <div className="tab">
-                    <IcoPlaceholder />
-                    FEMA
-                </div>
-                <div className="tab">
-                    <IcoPlaceholder />
-                    DHS
-                </div>
-                <div className="tab">
-                    <IcoPlaceholder />
-                    NORTHCOM
-                </div>
-            </div>
-        </>
+        <div className="tab-bar">
+            <Tab label="Integrated Ops" icon={<IcoMap />} isActive={true} />
+            <Tab label="CISA" />
+            <Tab label="FEMA" />
+            <Tab label="DHS" />
+            <Tab label="NORTHCOM" />
+        </div>
+    );
+}
+
+function Tab({ label, icon, isActive }) {
+    return (
+        <div className={`tab ${isActive ? "active" : ""}`}>
+            {icon ? icon : <IcoPlaceholder />}
+            {label}
+        </div>
     );
 }
