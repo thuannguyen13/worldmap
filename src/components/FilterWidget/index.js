@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./index.scss";
 
-export default function FilterSidebar({ label, children }) {
+export default function FilterWidget({ label, children }) {
     return (
         <div className="filter-sidebar">
             <div className="header-content">

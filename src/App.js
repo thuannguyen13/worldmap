@@ -10,7 +10,7 @@ import Button from "./components/Button";
 import PageHeader from "./components/PageHeader";
 import Header from "./components/Header";
 import TabBar from "./components/TabBar";
-import FilterSidebar, { SidebarItem } from "./components/FilterSidebar";
+import FilterWidget, { SidebarItem } from "./components/FilterWidget";
 import IcoEye from "./assets/IcoEye";
 import IcoTimeLine from "./assets/IcoTimeline";
 import IcoGlobe from "./assets/IcoGlobe";
@@ -22,8 +22,11 @@ export default function App() {
     const fgMapContainer = useRef(null);
     const bgMap = useRef(null);
     const bgMapContainer = useRef(null);
+    const popup = new mapboxgl.Popup({
+        closeButton: false,
+        closeOnClick: false,
+    });
 
-    const toolbar = document.getElementById("btnGroup");
     const mapADiv = document.getElementById("mapA");
     const ruler = document.getElementById("ruler");
 
@@ -96,7 +99,33 @@ export default function App() {
 
         fgMap.current.on("load", () => {
             matchZoom(fgMap.current.getZoom());
+            console.log(fgMap.current.getStyle());
             bgMap.current.setCenter(flipCoords(fgMap.current.getCenter()));
+        });
+
+        fgMap.current.on("mouseenter", "places", (e) => {
+            // Change the cursor style as a UI indicator.
+            fgMap.getCanvas().style.cursor = "pointer";
+
+            // Copy coordinates array.
+            const coordinates = e.features[0].geometry.coordinates.slice();
+            const description = e.features[0].properties.description;
+
+            // Ensure that if the map is zoomed out such that multiple
+            // copies of the feature are visible, the popup appears
+            // over the copy being pointed to.
+            while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+            }
+
+            // Populate the popup and set its coordinates
+            // based on the feature found.
+            popup.setLngLat(coordinates).setHTML(description).addTo(fgMap);
+        });
+
+        fgMap.current.on("mouseleave", "places", () => {
+            fgMap.getCanvas().style.cursor = "";
+            popup.remove();
         });
     });
 
@@ -142,20 +171,18 @@ export default function App() {
         });
     }
 
-    function toggleUI() {
-        settings.showToolbar ? toolbar.classList.add("hidden") : toolbar.classList.remove("hidden");
-        settings.showToolbar = !settings.showToolbar;
-    }
+    // function toggleUI() {
+    //     settings.showToolbar ? toolbar.classList.add("hidden") : toolbar.classList.remove("hidden");
+    //     settings.showToolbar = !settings.showToolbar;
+    // }
 
-    function loadShorcuts() {
-        document.addEventListener("keypress", (event) => {
-            let code = event.code;
-            if (code === "KeyK") toggleCamera();
-            if (code === "KeyJ") toggleUI();
-        });
-    }
-
-    loadShorcuts();
+    // function loadShorcuts() {
+    //     document.addEventListener("keypress", (event) => {
+    //         let code = event.code;
+    //         if (code === "KeyK") toggleCamera();
+    //         if (code === "KeyJ") toggleUI();
+    //     });
+    // }
 
     return (
         <div className="layout">
@@ -169,7 +196,7 @@ export default function App() {
                 <Button leadingIcon={<IcoGlobe />} traillingIcon={<IcoArrowDown />} value="Communicate" />
             </PageHeader>
             <main className="main">
-                <FilterSidebar>
+                <FilterWidget>
                     {dataLayers.map((item) => {
                         return (
                             <SidebarItem
@@ -182,7 +209,7 @@ export default function App() {
                             />
                         );
                     })}
-                </FilterSidebar>
+                </FilterWidget>
                 <div id="mapA" ref={fgMapContainer} />
                 <div id="mapB" ref={bgMapContainer} />
             </main>

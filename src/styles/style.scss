@@ -69,3 +69,8 @@ body {
     position: relative;
     height: 100%;
 }
+
+.mapboxgl-ctrl-logo,
+.mapboxgl-ctrl-bottom-right {
+    display: none !important;
+}
