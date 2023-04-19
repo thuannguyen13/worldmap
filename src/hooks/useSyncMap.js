@@ -3,30 +3,38 @@ import mapboxgl from "!mapbox-gl"; // eslint-disable-line import/no-webpack-load
 
 export function useSyncMap(master, clones) {
     useEffect(() => {
-        master.current.on("move", function () {
-            clones.current.setCenter(flipCoords(master.current.getCenter()));
-        });
+        const flipCoords = (lnglat) => {
+            let lat = -lnglat.lat;
+            let lng = lnglat.lng + 180;
+            return new mapboxgl.LngLat(lng, lat);
+        }
+    
+        const matchZoom = (zoom) => {
+            clones.current.setZoom(zoom);
+        }
 
-        master.current.on("zoom", function () {
+        const handleMove = () => {
+            clones.current.setCenter(flipCoords(master.current.getCenter()));
+        }
+
+        const handleZoom = () => {
             let curZoom = master.current.getZoom();
             matchZoom(curZoom);
-        });
-
-        master.current.on("load", () => {
+        }
+        
+        const handleLoad = () => {
             matchZoom(master.current.getZoom());
             clones.current.setCenter(flipCoords(master.current.getCenter()));
-        });
+        }
 
-        console.log("text");
-    });
+        master.current?.on("move", handleMove);
+        master.current?.on("zoom", handleZoom);
+        master.current?.on("load", handleLoad);
 
-    function flipCoords(lnglat) {
-        let lat = -lnglat.lat;
-        let lng = lnglat.lng + 180;
-        return new mapboxgl.LngLat(lng, lat);
-    }
-
-    function matchZoom(zoom) {
-        clones.current.setZoom(zoom);
-    }
+        return () => {
+            master.current?.off("move", handleMove);
+            master.current?.off("zoom", handleZoom);
+            master.current?.off("load", handleLoad);
+        }
+    }, [master, clones]);
 }
