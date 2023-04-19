@@ -18,56 +18,64 @@ import IcoGlobe from "./assets/IcoGlobe";
 import IcoPlus from "./assets/IcoPlus";
 import IcoArrowDown from "./assets/IcoArrowDown";
 
+const settings = {
+    mapStyle: "mapbox://styles/kenzilian13/clc00vjyb000214p39wvteqj3/draft",
+    accessToken: "pk.eyJ1Ijoia2VuemlsaWFuMTMiLCJhIjoiY2wwODBna2FhMDBiaTNkb2Ixb2g5bWJ1dyJ9.kk1S4Fgd5GWc-yASL0eoJg",
+    projection: {
+        view2D: "mercator",
+        view3D: "globe",
+    },
+    is3D: true,
+    showData: true,
+    showToolbar: true,
+    ShowRuler: false,
+    camera: {
+        isAtStart: true,
+        start: {
+            center: [-94.010448, 37.577386],
+            zoom: 4.5,
+            pitch: 2.5,
+            bearing: 0,
+        },
+        end: {
+            center: [133.395314, 39.291774],
+            zoom: 3,
+            bearing: 0,
+            pitch: 0,
+        },
+    },
+};
+
+const dataLayers = [
+    {
+        id: 1,
+        key: "IEP",
+    },
+    {
+        id: 2,
+        key: "military",
+    },
+];
+
 export default function App() {
     const fgMap = useRef(null);
     const fgMapContainer = useRef(null);
     const bgMap = useRef(null);
     const bgMapContainer = useRef(null);
-
-    let settings = {
-        mapStyle: "mapbox://styles/kenzilian13/clc00vjyb000214p39wvteqj3/draft",
-        accessToken: "pk.eyJ1Ijoia2VuemlsaWFuMTMiLCJhIjoiY2wwODBna2FhMDBiaTNkb2Ixb2g5bWJ1dyJ9.kk1S4Fgd5GWc-yASL0eoJg",
-        projection: {
-            view2D: "mercator",
-            view3D: "globe",
-        },
-        is3D: true,
-        showData: true,
-        showToolbar: true,
-        ShowRuler: false,
-        camera: {
-            isAtStart: true,
-            start: {
-                center: [-94.010448, 37.577386],
-                zoom: 4.5,
-                pitch: 2.5,
-                bearing: 0,
-            },
-            end: {
-                center: [133.395314, 39.291774],
-                zoom: 3,
-                bearing: 0,
-                pitch: 0,
-            },
-        },
-    };
-
-    let dataLayers = [
-        {
-            id: 1,
-            key: "IEP",
-        },
-        {
-            id: 2,
-            key: "military",
-        },
-    ];
-
     mapboxgl.accessToken = settings.accessToken;
 
-    useEffect(() => {
-        if (fgMap.current && bgMap.current) return;
+    const toggleCamera = () => {
+        const target = settings.camera.isAtStart ? settings.camera.end : settings.camera.start;
+        settings.camera.isAtStart = !settings.camera.isAtStart;
 
+        fgMap.current.flyTo({
+            ...target,
+            duration: 7000,
+            essential: true,
+        });
+    }
+
+    useEffect(() => {
         fgMap.current = new mapboxgl.Map({
             container: fgMapContainer.current,
             projection: settings.projection.view3D,
@@ -79,10 +87,10 @@ export default function App() {
             container: bgMapContainer.current,
             projection: settings.projection.view3D,
             style: settings.mapStyle,
-            ...settings.camera,
+            ...settings.camera.start,
         });
 
-        fgMap.current.on("click", (e) => {
+        const handleClickFgMap = (e) => {
             let cord = null;
             let locTitle = null;
             let locLocation = null;
@@ -116,65 +124,14 @@ export default function App() {
                     <p class="address">${locURL}</p>`
                 )
                 .addTo(fgMap.current);
-        });
-    });
+        }
+
+        fgMap.current.on("click", handleClickFgMap);
+
+        return () => fgMap.current.off("click", handleClickFgMap);
+    }, [settings]);
 
     useSyncMap(fgMap, bgMap);
-
-    function toggleCamera() {
-        const target = settings.camera.isAtStart ? settings.camera.end : settings.camera.start;
-        settings.camera.isAtStart = !settings.camera.isAtStart;
-
-        fgMap.current.flyTo({
-            ...target,
-            duration: 7000,
-            essential: true,
-        });
-    }
-
-    // function flipCoords(lnglat) {
-    //     let lat = -lnglat.lat;
-    //     let lng = lnglat.lng + 180;
-    //     return new mapboxgl.LngLat(lng, lat);
-    // }
-
-    // function matchZoom(zoom) {
-    //     bgMap.current.setZoom(zoom);
-    // }
-
-    // function toggleCaptureGuide() {
-    //     settings.ShowRuler ? ruler.classList.add("hidden") : ruler.classList.remove("hidden");
-    //     settings.ShowRuler = !settings.ShowRuler;
-    // }
-
-    // function toggleProjection() {
-    //     if (settings.is3D) {
-    //         fgMap.current.setProjection({
-    //             name: settings.projection.view2D,
-    //         });
-    //         mapADiv.style.opacity = 1;
-    //     } else {
-    //         fgMap.current.setProjection({
-    //             name: settings.projection.view3D,
-    //         });
-    //         fgMap.current.style.opacity = 0.9;
-    //     }
-
-    //     settings.is3D = !settings.is3D;
-    // }
-
-    // function toggleUI() {
-    //     settings.showToolbar ? toolbar.classList.add("hidden") : toolbar.classList.remove("hidden");
-    //     settings.showToolbar = !settings.showToolbar;
-    // }
-
-    // function loadShorcuts() {
-    //     document.addEventListener("keypress", (event) => {
-    //         let code = event.code;
-    //         if (code === "KeyK") toggleCamera();
-    //         if (code === "KeyJ") toggleUI();
-    //     });
-    // }
 
     return (
         <div className="layout">
